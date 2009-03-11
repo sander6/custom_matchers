@@ -1,0 +1,1 @@
+require 'custom_matchers' if RAILS_ENV == "test"

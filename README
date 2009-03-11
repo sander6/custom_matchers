@@ -1,0 +1,72 @@
+Some custom RSpec matchers I made that I find useful and cool.
+
+=== Containment
+Matches when each element in the argument list is included in the target object. Uses #include?, so this could mean a number of things, like inclusion in an array, inclusion as a substring, or even inclusion as a Module.
+  @integers.should contain(1, 2)
+  "peanut butter and jelly".should contain("nut", "butt")
+  Object.should contain(Kernel)
+  
+This can also check for inclusion and exclusion.
+  @collection.should contain(@expected_item, @other_expected_item).but_not(@unexpected_item)
+  
+It can also check if two arrays contain the same elements.
+  [1, 2, 3].should contain(1, 2, 3).exactly
+  @expected_values.should contain(1, 2, 3).and_nothing_else
+
+=== Increment/Decrement
+A pretty natural way to check if an attribute increases or decreases during some process.
+  @thing.should increment(:beans).by(2).when { @thing.add_some_beans(2) }
+  @farmer.ducks.should decrement(:size).when { @farmer.have_duck_for_dinner! }
+
+=== All
+Matches when all the elements in an enumerable fits the given condition, with an easy way to check for passing or failing.
+  [1, 2, 3].should all { |i| i < 10 }
+  @nils.should all.be(&:nil?)
+  [nil, nil, false].should_not all.be(&:nil?)
+  [false, false, false].shoud all.not.be(&:nil?)
+  
+All also tries its best to give RSpec-like Englishy syntax to matching everything in a collection.
+  [nil, nil, nil].should all.be_nil
+  @value.should all.be >= 0
+  @strings.should all =~ /butt/
+
+=== Change
+Matches when a attribute changes value, or changes to a specified value.
+  @person.name # => "Tex"
+  @person.should change(:name).when { @person.rename!("Bill") }
+  @person.should change(:name).to("Bill").when { @person.rename!("Bill") }
+  @person.should_not change(:name).when { @person.rename!("Tex") }
+  @person.should_not change(:name).to("Bill").when { @person.rename!("Joe") }
+
+=== Tolerance
+Matches when a value is within a given tolerance of a target.
+  @human.error.should be_within(0.001).of(@acceptable_error)
+  
+=== Variables
+Matches when the class or instance has the named variable or constant with or without the given value.
+  Klass.should have_class_variable(:@@default_for_something)
+  @person.should have_instance_variable(:@name).with_value("Tex")
+  Klass.should have_constant(:TIMECUBE)
+  
+This is especially helpful in Controller specs when you want to check if a certain variable has been assigned nil.
+  For instance, assigns[:variable].should be_nil will pass even if @variable was never set.
+  However, controller.should have_instance_variable(:@variable).with_value(nil) will perform as expected.
+
+=== Detector
+Matches when a collection contains at least one element passing the given condition
+  @collection.should have_an_element.where { |e| e > 10 }
+  @records.should have_an_element.that_is(&:valid?)
+
+Has a whole fistful of aliases and helper methods to make your specs look nice.
+  @values.should have_an_element.such_that { |e| e > 10 }
+  @results.should have_an_element.that_is > 10
+  @strings.should have_an_element.that.matches(/broomhandle/) (OR, @strings.should have_an_element.that_is =~ /broomhandle/)
+  @records.should_not have_an_element.that.is_nil
+  @hashes.should_not have_an_element.that.is_empty
+  
+A word of caution, though. The Detector matcher uses #detect, and then checks the return value to see if it passes.
+This means it has a heck of a time detecting whether or not a collection contains a nil or false value.
+This is circumvented with the NilDetector and FalseDetector, which are accessible through the pretty methods and should be transparent.
+However, this could cause some confusion:
+  @collection.should have_an_element.that_is(&:nil?)  <=== this doesn't work!
+  @collection.should have_an_element.that.is_nil      <=== this works fine!
