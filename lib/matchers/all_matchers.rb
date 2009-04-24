@@ -1,7 +1,7 @@
 module Sander6
   module CustomMatchers
 
-    module MatchingExtenders
+    module AllMatcherExtensions
       # Some more handy aliases for common things.
 
       def be_a(klass)
@@ -80,7 +80,7 @@ module Sander6
     end
 
     class AllMatcher
-      include Sander6::CustomMatchers::MatchingExtenders
+      include Sander6::CustomMatchers::AllMatcherExtensions
       
       def initialize(&conditions)
         @include_be = false
@@ -133,7 +133,7 @@ module Sander6
     end
   
     class NegativeAllMatcher   
-      include Sander6::CustomMatchers::MatchingExtenders
+      include Sander6::CustomMatchers::AllMatcherExtensions
 
       def initialize(&conditions)
         @include_be = false

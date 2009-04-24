@@ -19,24 +19,14 @@ module Sander6
 
       def failure_message
         "Expected #{@subklass.name} to be a#{"n immediate" if @immediate} subclass of #{@klass.name}, but it wasn't.\n" +
-        "Inheritance chain: #{inheritance_chain(@subklass).collect(&:name).join(" < ")}"
+        "Inheritance chain: #{@subklass.ancestors.collect(&:name).join(" < ")}"
       end
     
       def negative_failure_message
         "Expected #{@subklass.name} not to be a#{"n immediate" if @immediate} subclass of #{@klass.name}, but it was.\n" + 
-        "Inheritance chain: #{inheritance_chain(@subklass).collect(&:name).join(" < ")}"
+        "Inheritance chain: #{@subklass.ancestors.collect(&:name).join(" < ")}"
       end
-    
-      private
-      def inheritance_chain(klass)
-        chain = [klass]
-        parent_class = klass.superclass
-        while parent_class do
-          chain << parent_class
-          parent_class = parent_class.superclass
-        end
-        return chain.compact
-      end
+
     end
     
     def descend_from(klass)

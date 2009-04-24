@@ -20,8 +20,7 @@ module Sander6
       
       def matches?(collection)
         @collection = collection
-        @detected_item = @collection.detect(&@detector)
-        !!@detected_item
+        @collection.any?(&@detector)
       end
       
       def failure_message
@@ -35,10 +34,10 @@ module Sander6
       def negative_failure_message
         if @detector.is_a?(Symbol)
           "Expected the collection not to contain an element that is #{@detector.to_s.chomp("?")}, but it did!\n" +
-          "Detected item: #{@detected_item}"
+          "Detected item: #{@collection.detect(&@detector).inspect}"
         else
           "Expected the collection not to contain an element with certain criteria, but it did!\n" + 
-          "Item: #{@detected_item}"
+          "Detected item: #{@collection.detect(&@detector).inspect}"
         end        
       end
       
@@ -65,12 +64,14 @@ module Sander6
       alias_method :is_true, :true
       
       def false
-        Sander6::CustomMatchers::FalseDetectorMatcher.new
+        @detector = Proc.new { |o| !o }
+        self
       end
       alias_method :is_false, :false
       
       def nil
-        Sander6::CustomMatchers::NilDetectorMatcher.new
+        @detector = :nil?
+        self
       end
       alias_method :is_nil, :nil
       
@@ -124,42 +125,6 @@ module Sander6
           Proc.new { |o| o.__send__(:"#{name}?", *args) }
         end
         self
-      end
-    end
-   
-    class NilDetectorMatcher
-      def initialize
-      end
-      
-      def matches?(collection)
-        @collection = collection
-        @collection.any? { |e| e.nil? }
-      end
-      
-      def failure_message
-        "Expected the collection to contain an element that is nil, but it didn't!\n"
-      end
-      
-      def negative_failure_message
-        "Expected the collection not to contain an element that is nil, but it did!\n"
-      end
-    end
-    
-    class FalseDetectorMatcher
-      def initialize
-      end
-      
-      def matches?(collection)
-        @collection = collection
-        @collection.any? { |o| o.object_id == 0 || o.nil? }
-      end
-      
-      def failure_message
-        "Expected the collection to contain an element that is false, but it didn't!\n"
-      end
-      
-      def negative_failure_message
-        "Expected the collection not to contain an element that is false, but it did!\n"
       end
     end
    
