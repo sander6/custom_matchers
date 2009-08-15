@@ -61,6 +61,7 @@ module Sander6
           [@unexpected_collection, opts.merge({:unexpected => true})]
         )
       end
+      alias_method :no_less_than, :at_least
       
       def at_most(number = nil)
         opts = number.nil? ? { :expect_at_most => true } : { :upper => number }
@@ -68,7 +69,8 @@ module Sander6
           [@expected_collection, opts],
           [@unexpected_collection, opts.merge({:unexpected => true})]
         )
-      end    
+      end
+      alias_method :no_more_than, :at_most    
     end
   
     class ContainmentMatcher
