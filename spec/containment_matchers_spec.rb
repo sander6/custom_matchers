@@ -119,3 +119,158 @@ describe Sander6::CustomMatchers::ExactContainmentMatcher do
   end
   
 end
+
+describe Sander6::CustomMatchers::MultipleContainmentMatcher do
+  
+  describe "should contain(...).once" do
+    it "should work" do
+      [1, 2, 3].should contain(1).once
+    end
+    
+    it "should work for negative matching" do
+      [1, 1, 2].should_not contain(1).once
+    end
+    
+    it "should work with multiple values" do
+      [1, 2, 3].should contain(1, 2).once
+    end
+    
+    it "should work with multiple values for negative matching" do
+      [1, 1, 2, 2].should_not contain(1, 2).once
+    end
+  end
+  
+  describe "should contain(...).twice" do
+    it "should work" do
+      [1, 1, 3].should contain(1).twice
+    end
+    
+    it "should work for negative matching" do
+      [1, 2, 3].should_not contain(1).twice
+    end
+    
+    it "should work with multiple values" do
+      [1, 1, 2, 2].should contain(1, 2).twice
+    end
+    
+    it "should work with multiple values for negative matching" do
+      [1, 1, 2, 3].should_not contain(1, 2).twice
+    end
+  end
+  
+  
+  describe "should contain(...).thrice" do
+    it "should work" do
+      [1, 1, 1].should contain(1).thrice
+    end
+    
+    it "should work for negative matching" do
+      [1, 1, 2].should_not contain(1).thrice
+    end
+    
+    it "should work with multiple values" do
+      [1, 1, 1, 2, 2, 2].should contain(1, 2).thrice
+    end
+    
+    it "should work with multiple values for negative matching" do
+      [1, 1, 1, 2, 2].should_not contain(1, 2).thrice
+    end
+  end
+  
+  describe "should contain(...).exactly(#).times" do
+    it "should work" do
+      [1, 1, 1, 1].should contain(1).exactly(4).times
+    end
+    
+    it "should work for negative matching" do
+      [1, 2, 2, 2].should_not contain(1).exactly(4).times
+    end
+    
+    it "should work with multiple values" do
+      [1, 1, 1, 1, 2, 2, 2, 2].should contain(1, 2).exactly(4).times
+    end
+    
+    it "should work with multiple values for negative matching" do
+      [1, 1, 1, 2, 2, 2].should_not contain(1, 2).exactly(4).times
+    end
+  end
+  
+  describe "should contain(...).more_than(#).times" do
+    it "should work" do
+      [1, 1, 1, 2, 2, 3].should contain(1).more_than(2).times
+    end
+    
+    it "should work for negative matching" do
+      [1, 2, 2, 3, 3, 3].should_not contain(1).more_than(2).times
+    end
+    
+    it "should work with multiple values" do
+      [1, 1, 1, 2, 2, 2, 3].should contain(1, 2).more_than(2).times
+    end
+    
+    it "should work with multiple values for negative matching" do
+      [1, 1, 2, 2, 3, 3, 3].should_not contain(1, 2).more_than(2).times
+    end
+  end
+  
+  describe "should contain(...).less_than(#).times" do
+    it "should work" do
+      [1, 2, 2, 3, 3, 3].should contain(1).less_than(2).times
+    end
+    
+    it "should work for negative matching" do
+      [1, 1, 1, 2, 3].should_not contain(1).less_than(2).times
+    end
+    
+    it "should work with multiple values" do
+      [1, 1, 2, 2, 3, 3].should contain(1, 2).less_than(3).times
+    end
+    
+    it "should work with multiple values for negative matching" do
+      [1, 1, 1, 2, 2, 2, 3].should_not contain(1, 2).less_than(3).times
+    end
+  end
+  
+  describe "should contain(...).at_least(#).times" do
+    it "should work" do
+      [1, 1, 1, 2, 2].should contain(1).at_least(3).times
+      [1, 1, 1, 1, 2].should contain(1).at_least(3).times
+    end
+    
+    it "should work for negative matching" do
+      [1, 1, 2, 2].should_not contain(1).at_least(3).times
+    end
+    
+    it "should work with multiple values" do
+      [1, 1, 1, 2, 2, 2].should contain(1, 2).at_least(3).times
+    end
+    
+    it "should work with multiple values for negative matching" do
+      [1, 1, 2, 2].should_not contain(1, 2).at_least(3).times
+    end
+  end
+  
+  describe "should contain(...).at_most(#).times" do
+    it "should work" do
+      [1, 1, 1, 2, 2, 3].should contain(1).at_most(3).times
+    end
+    
+    it "should work for negative matching" do
+      [1, 1, 1, 1, 2, 2].should_not contain(1).at_most(3).times
+    end
+    
+    it "should work with multiple values" do
+      [1, 1, 2, 2, 2].should contain(1, 2).at_most(3).times
+    end
+    
+    it "should work with multiple values for negative matching" do
+      [1, 1, 1, 1, 2, 2].should_not contain(1, 2).at_most(3).times
+    end
+  end
+  
+  describe "chaining counting expectations together" do
+    it "should work" do
+      [1, 1, 2, 2, 2, 3].should contain(1).at_least(2).times.and_also(2).exactly(3).times
+    end
+  end
+end
