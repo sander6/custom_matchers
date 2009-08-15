@@ -13,6 +13,19 @@ It can also check if two arrays contain the same elements.
   [1, 2, 3].should contain(1, 2, 3).exactly
   @expected_values.should contain(1, 2, 3).and_nothing_else
 
+The ContainmentMatcher can be used to match inclusion multiple times.
+  [1, 1, 2].should contain(1).twice
+  "peanut butter and jelly".should contain("t").exactly(3).times
+
+Most any way you want to say this is supported.
+  @collection.should contain(@something).thrice
+  @collection.should contain(@something).at_least.twice
+  @collection.should contain(@something).no_more_than(10).times
+  @collection.should contain(1).and(2).at_most(2).times
+  
+You can also chain them together to match different values is different amounts in the same spec.
+  @contain.should contain(@thing1).at_least.once.and(@thing2).no_more_than.once
+
 === Increment/Decrement
 A pretty natural way to check if an attribute increases or decreases during some process.
   @thing.should increment(:beans).by(2).when { @thing.add_some_beans(2) }
