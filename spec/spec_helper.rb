@@ -4,16 +4,6 @@ require 'spec'
 require 'mocha'
 require 'ostruct'
 
-# Some stuff to smooth over Rails-specific niceities.
-
-unless defined?(ActiveRecord)
-  # This is needed in the specs, but not really.
-  module ActiveRecord
-    class Base
-    end
-  end
-end
-
 unless Symbol.instance_methods.include?("to_proc")
   class Symbol
     def to_proc

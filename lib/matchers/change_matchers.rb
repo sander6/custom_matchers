@@ -65,7 +65,7 @@ module Sander6
         
         @before = @value_proc.call(@obj)
         @event_proc.call
-        @obj.reload if @obj.is_a?(ActiveRecord::Base)
+        @obj.reload if Object.const_defined?(:ActiveRecord) && @obj.is_a?(ActiveRecord::Base)
         @after = @value_proc.call(@obj)
         
         @delta = (@after - @before).abs if @after.respond_to?(:-)

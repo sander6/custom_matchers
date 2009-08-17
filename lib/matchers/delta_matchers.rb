@@ -22,7 +22,7 @@ module Sander6
         @obj = obj
         @before = @obj.__send__(@meth)
         @block.call
-        @obj.reload if @obj.is_a?(ActiveRecord::Base)
+        @obj.reload if Object.const_defined?(:ActiveRecord) && @obj.is_a?(ActiveRecord::Base)
         @after = @obj.__send__(@meth)
         @after == @before + @step
       end
@@ -59,7 +59,7 @@ module Sander6
         @obj = obj
         @before = @obj.__send__(@meth)
         @block.call
-        @obj.reload if @obj.is_a?(ActiveRecord::Base)
+        @obj.reload if Object.const_defined?(:ActiveRecord) && @obj.is_a?(ActiveRecord::Base)
         @after = @obj.__send__(@meth)
         @after == @before - @step
       end

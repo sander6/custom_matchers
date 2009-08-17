@@ -17,10 +17,19 @@ describe Sander6::CustomMatchers::ChangeMatcher do
     end
     
     it "should reload ActiveRecord::Base objects before comparing the before- and after-block values" do
+      unless defined?(ActiveRecord)
+        module ActiveRecord; class Base; end; end
+      end
+      
       @thing.stubs(:is_a?).with(Proc).returns(false)
       @thing.stubs(:is_a?).with(ActiveRecord::Base).returns(true)
       @thing.expects(:reload)
       @thing.should change(:name).when { @thing.name = "Bob" }
+    end
+    
+    it "should not raise an error if ActiveRecord isn't defined" do
+      Object.stubs(:const_defined?).with(:ActiveRecord).returns(false)
+      lambda { @thing.should change(:name).when { @thing.name = "Bob" } }.should_not raise_error
     end
     
     describe "should change(message).when(...)" do
