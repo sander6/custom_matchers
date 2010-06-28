@@ -94,6 +94,14 @@ module Sander6
       end
       alias_method :and_nothing_else, :exactly
     
+      def in_order
+        CustomMatchers::OrderedContainmentMatcher.new(@expected_collection)
+      end
+      
+      def successively
+        CustomMatchers::SuccessiveContainmentMatcher.new(@expected_collection)
+      end
+
       def an_element
         Sander6::CustomMatchers::DetectorMatcher.new
       end
@@ -147,14 +155,19 @@ module Sander6
       def initialize(collection)
         @collection = collection
       end
-    
+      
+      def in_order
+        ExactSuccessiveContainmentMatcher.new(@collection)
+      end
+      alias_method :successively, :in_order
+      
       def matches?(other)
         @other = other
         @missing = @collection.reject { |e| @other.include?(e) }
         @extra = @other.reject { |e| @collection.include?(e) }
-        @missing.empty? && @extra.empty?
+        @missing.empty? && @extra.empty?          
       end
-    
+      
       def failure_message
         "Expected #{@other.inspect} to exactly contain #{@collection.inspect}, but it didn't!\n" +
         "Missing: #{@missing.inspect}\n" +
@@ -164,6 +177,93 @@ module Sander6
       def negative_failure_message
         "Expected #{@other.inspect} not to exactly contain #{@collection.inspect}, but it did!"
       end
+    end
+    
+    class OrderedContainmentMatcher
+      def initialize(collection)
+        @collection = collection
+      end
+      
+      def exactly
+        ExactSuccessiveContainmentMatcher.new(@collection)
+      end
+      alias_method :and_nothing_else, :exactly
+      
+      def matches?(other)
+        @other = other
+        idx = 0
+        @collection.all? do |elem|
+          if @other[idx..-1].include?(elem)
+            idx = @other.index(elem)
+          else
+            false
+          end
+        end
+      end
+      
+      def failure_message
+        "Expected #{@other.inspect} to contain #{@collection.inspect} in order, but it didn't!"
+      end
+      
+      def negative_failure_message
+        "Expected #{@other.inspect} not to contain #{@collection.inspect} in order, but it did!"        
+      end
+    end
+    
+    class SuccessiveContainmentMatcher
+      def initialize(collection)
+        @collection = collection
+      end
+      
+      def exactly
+        ExactSuccessiveContainmentMatcher.new(@collection)
+      end
+      alias_method :and_nothing_else, :exactly
+      
+      def matches?(other)
+        @other = other
+        successively_contains?(@collection, @other)
+      end
+      
+      def successively_contains?(collection, other)
+        idx = other.index(collection.first)
+        if idx
+          if other[idx,collection.size] == collection
+            true
+          else
+            successively_contains?(collection, other[idx+1..-1])
+          end
+        else
+          false
+        end
+      end
+      
+      def failure_message
+        "Expected #{@other.inspect} to contain #{@collection.inspect} successively, but it didn't!"
+      end
+      
+      def negative_failure_message
+        "Expected #{@other.inspect} not to contain #{@collection.inspect} successively, but it did!"
+      end
+    end
+    
+    class ExactSuccessiveContainmentMatcher
+      def initialize(collection)
+        @collection = collection
+      end
+      
+      def matches?(other)
+        @other = other
+        @other == @collection
+      end
+      
+      def failure_message
+        "Expected #{@other.inspect} to exactly contain #{@collection.inspect} successively, but it didn't!"
+      end
+      
+      def negative_failure_message
+        "Expected #{@other.inspect} not to exactly contain #{@collection.inspect} successively, but it did!"
+      end      
     end
     
     class MultipleContainmentMatcher

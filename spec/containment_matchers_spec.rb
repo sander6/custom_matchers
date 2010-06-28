@@ -105,10 +105,6 @@ describe Sander6::CustomMatchers::ExactContainmentMatcher do
       [1, 2, 3].should contain(2, 1, 3).exactly
     end
   
-    it "should match exact containment for strings" do
-      "peanut butter and jelly".should contain("peanut butter and jelly").exactly
-    end
-    
     it "should be aliased as #and_nothing_else" do
       [1, 2, 3].should contain(1, 2, 3).and_nothing_else
     end
@@ -118,6 +114,66 @@ describe Sander6::CustomMatchers::ExactContainmentMatcher do
     end
   end
   
+end
+
+describe Sander6::CustomMatchers::OrderedContainmentMatcher do
+  describe "should contain(...).in_order" do
+    it "should match in-order containment for arrays" do
+      [1,2,3,4,5].should contain(1,3,5).in_order
+    end
+    
+    it "should work for negative matching" do
+      [1,2,3,4,5].should_not contain(2,1,3).in_order
+    end
+  end
+  
+  describe "should contain(...).in_order.and_nothing_else" do
+    it "should match in-order exact containment" do
+      [1,2,3].should contain(1,2,3).in_order.and_nothing_else
+    end
+    
+    it "should work for negative matching when the elements are not in order" do
+      [1,2,3].should_not contain(2,1,3).in_order.and_nothing_else
+    end
+    
+    it "should work for negative matching when there are missing elements" do
+      [1,2,3].should_not contain(1,2,3,4).in_order.and_nothing_else
+    end
+    
+    it "should work for negative matching when there are extra elements" do
+      [1,2,3,4].should_not contain(1,2,3).in_order.and_nothing_else
+    end
+  end
+end
+
+describe Sander6::CustomMatchers::SuccessiveContainmentMatcher do
+  describe "should contain(...).successively" do
+    it "should match successive-ordered containment for arrays" do
+      [1,2,3,4,5].should contain(2,3,4).successively
+    end
+    
+    it "should work for negative matching" do
+      [1,2,3,4,5].should_not contain(2,1,3).successively
+    end
+  end
+  
+  describe "should contain(...).successively.and_nothing_else" do
+    it "should match in-order successive containment" do
+      [1,2,3].should contain(1,2,3).successively.and_nothing_else
+    end
+    
+    it "should work for negative matching when the elements are not in order" do
+      [1,2,3].should_not contain(2,1,3).successively.and_nothing_else
+    end
+    
+    it "should work for negative matching when there are missing elements" do
+      [1,2,3].should_not contain(1,2,3,4).successively.and_nothing_else
+    end
+    
+    it "should work for negative matching when there are extra elements" do
+      [1,2,3,4].should_not contain(1,2,3).successively.and_nothing_else
+    end
+  end
 end
 
 describe Sander6::CustomMatchers::MultipleContainmentMatcher do
